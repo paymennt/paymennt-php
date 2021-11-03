@@ -7,176 +7,65 @@
 *
 *  @author bashar
 */
-class Address {
+class Address extends Validatable {
+
+  private const REGEX_COUNTRY = "/^[a-zA-Z]{3}$/";
+
   /**
   * name on address
   * @var string
   */
-  private $name;
+  public $name;
 
   /**
   * address line 1
   * @var string
   */
-  private $address1;
+  public $address1;
 
   /**
   * address line 2
   * @var string
   */
-  private $address2;
+  public $address2;
 
   /**
   * address city
   * @var string
   */
-  private $city;
+  public $city;
 
   /**
   * address state
   * @var string
   */
-  private $state;
+  public $state;
 
   /**
   * address zip or post code
   * @var string
   */
-  private $zip;
+  public $zip;
 
   /**
   * address ISO 3-letter country code (Ex. USA, FRA, UAE, KSA, IND, etc)
   * @var string
   */
-  private $country;
+  public $country;
 
   /*************************************************************************************************
-  * GETTERS AND SETTERS
+  * CLASS METHODS
   */
 
   /**
-  * Get the value of name on address
-  * @return string
+  * Validates instasnce values. Throws exception if invalid
   */
-  public function getName() {
-    return $this->name;
-  }
-
-  /**
-  * Set the value of name on address
-  * @param string $name
-  * @return self
-  */
-  public function setName(string $name) {
-    $this->name = $name;
-    return $this;
-  }
-
-  /**
-  * Get the value of address line 1
-  * @return string
-  */
-  public function getAddress1() {
-    return $this->address1;
-  }
-
-  /**
-  * Set the value of address line 1
-  * @param string $address1
-  * @return self
-  */
-  public function setAddress1(string $address1) {
-    $this->address1 = $address1;
-    return $this;
-  }
-
-  /**
-  * Get the value of address line 2
-  * @return string
-  */
-  public function getAddress2() {
-    return $this->address2;
-  }
-
-  /**
-  * Set the value of address line 2
-  * @param string $address2
-  * @return self
-  */
-  public function setAddress2(?string $address2) {
-    $this->address2 = $address2;
-    return $this;
-  }
-
-  /**
-  * Get the value of address city
-  * @return string
-  */
-  public function getCity() {
-    return $this->city;
-  }
-
-  /**
-  * Set the value of address city
-  * @param string $city
-  * @return self
-  */
-  public function setCity(string $city) {
-    $this->city = $city;
-    return $this;
-  }
-
-  /**
-  * Get the value of address state
-  * @return string
-  */
-  public function getState() {
-    return $this->state;
-  }
-
-  /**
-  * Set the value of address state
-  * @param string $state
-  * @return self
-  */
-  public function setState(?string $state) {
-    $this->state = $state;
-    return $this;
-  }
-
-  /**
-  * Get the value of address zip or post code
-  * @return string
-  */
-  public function getZip() {
-    return $this->zip;
-  }
-
-  /**
-  * Set the value of address zip or post code
-  * @param string $zip
-  * @return self
-  */
-  public function setZip(?string $zip) {
-    $this->zip = $zip;
-    return $this;
-  }
-
-  /**
-  * Get the value of address ISO 3-letter country code (Ex. USA, FRA, UAE, KSA, IND, etc)
-  * @return string
-  */
-  public function getCountry() {
-    return $this->country;
-  }
-
-  /**
-  * Set the value of address ISO 3-letter country code (Ex. USA, FRA, ARE, KSA, IND, etc)
-  * @param string $country
-  * @return self
-  */
-  public function setCountry(string $country) {
-    $this->country = $country;
-    return $this;
+  public function validate() {
+    $this->validateNullEmpty("name");
+    $this->validateNullEmpty("address1");
+    $this->validateNullEmpty("city");
+    if (preg_match(Address::REGEX_COUNTRY, $this->country) !== 1) {
+      throw new Exception("country must be an ISO 3 alpha code");
+    }
   }
 }

@@ -12,7 +12,9 @@ final class PaymenntClient {
 
   private const ENV_URL_LIVE  = "https://api.pointcheckout.com/mer/v2.0/";
   private const ENV_URL_TEST  = "https://api.test.pointcheckout.com/mer/v2.0/";
+
   private const URL_CHECKOUT = "checkout/";
+  private const URL_CHECKOUT_WEB = "checkout/web";
 
   /**  @var string $apiKey the PAYMENNT API Key */
   private string $apiKey = '';
@@ -46,64 +48,81 @@ final class PaymenntClient {
   public function getCheckout(string $checkoutId) : Checkout {
     $url = PaymenntClient::URL_CHECKOUT . $checkoutId;
     $result = $this->apiCall($url, null);
+    return $this->parseCheckoutResult($result);
+  }
+
+  /***********************************************************************************************
+  * CHECKOUT API CALLS
+  */
+
+  public function createWebCheckout(WebCheckoutRequest $webCheckoutRequest) : Checkout {
+    if (!isset($webCheckoutRequest)) {
+      throw new Exception("request cannot be null or empty");
+    }
+    $url = PaymenntClient::URL_CHECKOUT_WEB;
+    $result = $this->apiCall($url, $webCheckoutRequest);
+    return $this->parseCheckoutResult($result);
+  }
+
+  /***********************************************************************************************
+  * HELPER FUNCTIONS
+  */
+  private function parseCheckoutResult($result) {
     $checkout = new Checkout();
-    $checkout->setId($result->id);
-    $checkout->setDisplayId($result->displayId);
-    $checkout->setCheckoutKey($result->checkoutKey);
-    $checkout->setRequestId($result->requestId);
-    $checkout->setOrderId($result->orderId);
-    $checkout->setCurrency($result->currency);
-    $checkout->setAmount($result->amount);
-    $checkout->setStatus($result->status);
-    $checkout->setRedirectUrl($result->redirectUrl);
-    $checkout->setBranchId($result->branchId);
-    $checkout->setBranchName($result->branchName);
-    $checkout->setUsedPaymentMethod($result->usedPaymentMethod);
+    $checkout->id = $result->id;
+    $checkout->displayId = $result->displayId;
+    $checkout->checkoutKey = $result->checkoutKey;
+    $checkout->requestId = $result->requestId;
+    $checkout->orderId = $result->orderId;
+    $checkout->currency = $result->currency;
+    $checkout->amount = $result->amount;
+    $checkout->status = $result->status;
+    $checkout->redirectUrl = $result->redirectUrl;
+    $checkout->branchId = $result->branchId;
+    $checkout->branchName = $result->branchName;
+    $checkout->usedPaymentMethod = $result->usedPaymentMethod;
 
     # values not present in every API call
     if (isset($result->base64QR)) {
-      $checkout->setBase64QR($result->base64QR);
+      $checkout->base64QR = $result->base64QR;
     }
     if (isset($result->subscriptionId)) {
-      $checkout->setSubscriptionId($result->subscriptionId);
+      $checkout->subscriptionId = $result->subscriptionId;
     }
 
     if (isset($result->customer)) {
-      $resultCustomer = $result->customer;
-      $customer = new Customer();
-      $customer->setId($resultCustomer->id);
-      $customer->setReference($resultCustomer->reference);
-      $customer->setFirstName($resultCustomer->firstName);
-      $customer->setLastName($resultCustomer->lastName);
-      $customer->setEmail($resultCustomer->email);
-      $customer->setPhone($resultCustomer->phone);
-      $checkout->setCustomer($customer);
+      $customer = $result->customer;
+      $checkout->customer = new Customer();
+      $checkout->customer->id = $customer->id;
+      $checkout->customer->reference = $customer->reference;
+      $checkout->customer->firstName = $customer->firstName;
+      $checkout->customer->lastName = $customer->lastName;
+      $checkout->customer->email = $customer->email;
+      $checkout->customer->phone = $customer->phone;
     }
 
     if (isset($result->billingAddress)) {
-      $resultBilling = $result->billingAddress;
-      $address = new Address();
-      $address->setName($resultBilling->name);
-      $address->setAddress1($resultBilling->address1);
-      $address->setAddress2($resultBilling->address2);
-      $address->setCity($resultBilling->city);
-      $address->setState($resultBilling->state);
-      $address->setZip($resultBilling->zip);
-      $address->setCountry($resultBilling->country);
-      $checkout->setBillingAddress($address);
+      $address = $result->billingAddress;
+      $checkout->billingAddress = new Address();
+      $checkout->billingAddress->name = $address->name;
+      $checkout->billingAddress->address1 = $address->address1;
+      $checkout->billingAddress->address2 = $address->address2;
+      $checkout->billingAddress->city = $address->city;
+      $checkout->billingAddress->state = $address->state;
+      $checkout->billingAddress->zip = $address->zip;
+      $checkout->billingAddress->country = $address->country;
     }
 
     if (isset($result->deliveryAddress)) {
-      $resultDelivery = $result->deliveryAddress;
-      $address = new Address();
-      $address->setName($resultDelivery->name);
-      $address->setAddress1($resultDelivery->address1);
-      $address->setAddress2($resultDelivery->address2);
-      $address->setCity($resultDelivery->city);
-      $address->setState($resultDelivery->state);
-      $address->setZip($resultDelivery->zip);
-      $address->setCountry($resultDelivery->country);
-      $checkout->setDeliveryAddress($address);
+      $address = $result->deliveryAddress;
+      $checkout->deliveryAddress = new Address();
+      $checkout->deliveryAddress->name = $address->name;
+      $checkout->deliveryAddress->address1 = $address->address1;
+      $checkout->deliveryAddress->address2 = $address->address2;
+      $checkout->deliveryAddress->city = $address->city;
+      $checkout->deliveryAddress->state = $address->state;
+      $checkout->deliveryAddress->zip = $address->zip;
+      $checkout->deliveryAddress->country = $address->country;
     }
 
     return $checkout;
@@ -113,34 +132,37 @@ final class PaymenntClient {
   * HELPER FUNCTIONS
   */
 
-  private function apiCall(string $url, $request){
-    try {
-      $headers = array(
-        'Content-Type: application/json',
-        'X-PointCheckout-Api-Key:' . $this->apiKey,
-        'X-PointCheckout-Api-Secret:' . $this->apiSecret
-      );
-      $requestUrl = $this->getApiBaseUrl() . $url;
+  private function apiCall(string $url, $request) {
+    $headers = array(
+      'Content-Type: application/json',
+      'X-PointCheckout-Api-Key:' . $this->apiKey,
+      'X-PointCheckout-Api-Secret:' . $this->apiSecret
+    );
+    $requestUrl = $this->getApiBaseUrl() . $url;
 
-      $ch = curl_init($requestUrl);
-      curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-      curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-      if (!is_null($request)) {
-        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($request));
-      }
+    $ch = curl_init($requestUrl);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+    # curl_setopt($ch, CURLOPT_FAILONERROR, true);
+    if (!is_null($request)) {
+      curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($request));
+    }
+
+    try {
       $response = curl_exec($ch);
       $response = json_decode($response);
-      if (!$response->success) {
-        $errorMessage = isset($response->error) ?
-        $response->error :
-        'An error occurred while connecting to PAYMENNT service';
-        error_log($errorMessage, 0);
-        throw new Exception($errorMessage);
+      if (isset($response) && $response->success) {
+        return $response->result;
       }
-      return $response->result;
-    } catch (\Exception $ex) {
-      error_log("Failed to connect call PointChckout API: " . $ex->getMessage(), 0);
-      throw $ex;
+      $errorMessage = "An error occurred while connecting to PAYMENNT service";
+      if (isset($response) && isset($response->error)) {
+        $errorMessage = $response->error;
+      } else if (curl_errno($ch)) {
+        $errorMessage = $errorMessage . ": " . curl_error($ch);
+      }
+      throw new Exception($errorMessage);
+    } finally {
+      curl_close($ch);
     }
   }
 
@@ -155,15 +177,4 @@ final class PaymenntClient {
     }
   }
 
-  /**
-  * echo(): test method
-  *
-  * @param string $param1 A string containing the parameter, do this for each parameter to the function, make sure to make it descriptive
-  * @return string
-  */
-  public function hello($name){
-    $checkout = new Checkout();
-
-    return "Hello " . $name;
-  }
 }
