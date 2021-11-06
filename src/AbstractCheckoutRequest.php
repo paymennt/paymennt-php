@@ -34,6 +34,12 @@ abstract class AbstractCheckoutRequest extends Validatable {
   public $amount;
 
   /**
+  * order totals associated with this checkout
+  * @var Totals
+  */
+  public $totals;
+
+  /**
   * id of the branch to which this payment belongs
   * @var string
   */
@@ -75,6 +81,12 @@ abstract class AbstractCheckoutRequest extends Validatable {
   */
   public $items;
 
+  /**
+  * default language to use for the checkout form
+  * @var string
+  */
+  public $language = "en";
+
   /*************************************************
   * CLASS METHODS
   */
@@ -89,6 +101,7 @@ abstract class AbstractCheckoutRequest extends Validatable {
     if (preg_match('/^[a-zA-Z]{3}$/', $this->currency) !== 1) {
       throw new Exception("currency code must be a 3-digit ISO code and non empty.");
     }
+    if (isset($this->totals)) $this->totals->validate();
     if (isset($this->customer)) $this->customer->validate();
     if (isset($this->billingAddress)) $this->billingAddress->validate();
     if (isset($this->deliveryAddress)) $this->deliveryAddress->validate();
@@ -97,6 +110,7 @@ abstract class AbstractCheckoutRequest extends Validatable {
         $item->validate();
       }
     }
+
   }
 
 }
