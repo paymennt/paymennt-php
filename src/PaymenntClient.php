@@ -17,13 +17,13 @@ final class PaymenntClient {
   private const URL_CHECKOUT_WEB = "checkout/web";
 
   /**  @var string $apiKey the PAYMENNT API Key */
-  private string $apiKey = '';
+  private $apiKey;
 
   /**  @var string $apiSecret the PAYMENNT API Secret */
-  private string $apiSecret = '';
+  private $apiSecret;
 
   /**  @var string $useTestEnvironment Whether or not to use the test environment */
-  private bool $useTestEnvironment = false;
+  private $useTestEnvironment = false;
 
   public function __construct(string $apiKey, string $apiSecret) {
     if (empty($apiKey) || empty($apiSecret))
