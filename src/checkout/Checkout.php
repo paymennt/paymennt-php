@@ -1,4 +1,4 @@
-<?php namespace Paymennt;
+<?php namespace Paymennt\checkout;
 
 /**
 *  Checkout class

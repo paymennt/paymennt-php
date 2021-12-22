@@ -10,7 +10,7 @@
 abstract class Validatable {
   private const REGEX_AMOUNT = "/^([0-9]+\.?[0-9]{0,2}|\.[0-9]{1,2})$/";
   private const REGEX_NUMBER = "/^[0-9]+\.?[0-9]{0,2}|\.[0-9]{1,4}$/";
-
+  private const REGEX_WHOLE_NUM = "/^\d+$/";
   /**
   * Validates instasnce values. Throws exception if invalid
   */
@@ -49,6 +49,21 @@ abstract class Validatable {
   protected function validateEmail($param) {
     if (filter_var($this->{$param}, FILTER_VALIDATE_EMAIL) === FALSE) {
       throw new Exception("'" . $this->{$param} . "' is not a valid email address");
+    }
+  }
+
+  /**
+  * Whole number validation
+  */
+  public function validateWholeNumber($param) {
+    if (preg_match(Validatable::REGEX_WHOLE_NUM, $this->{$param}) !== 1) {
+      throw new Exception("'".$this->{$param}."' is not a valid number");
+    }
+    return true;
+  }
+  protected function validateCurrencyCode($param) {
+    if (preg_match('/^[a-zA-Z]{3}$/', $this->{$param}) !== 1) {
+      throw new Exception("currency code must be a 3-digit ISO code and non empty.");
     }
   }
 }

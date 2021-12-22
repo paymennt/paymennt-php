@@ -1,4 +1,8 @@
-<?php namespace Paymennt;
+<?php namespace Paymennt\checkout;
+
+require_once(__DIR__.'/AbstractCheckoutRequest.php');
+
+use Paymennt\Exception as Exception;
 
 /**
 *  Checkout class
@@ -49,6 +53,7 @@ class WebCheckoutRequest extends AbstractCheckoutRequest {
     if (filter_var($this->returnUrl, FILTER_VALIDATE_URL) === FALSE) {
       throw new Exception("returnUrl must be a valid url including protocol: '" . $this->returnUrl . "'");
     }
+    return true;
   }
 
 }

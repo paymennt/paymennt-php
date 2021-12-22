@@ -1,4 +1,8 @@
-<?php namespace Paymennt;
+<?php namespace Paymennt\checkout;
+
+require_once(__DIR__.'/../Validatable.php');
+
+use Paymennt\Exception as Exception;
 
 /**
 *  Address class
@@ -7,7 +11,7 @@
 *
 *  @author bashar
 */
-class Address extends Validatable {
+class Address extends \Paymennt\Validatable {
 
   private const REGEX_COUNTRY = "/^[a-zA-Z]{3}$/";
 

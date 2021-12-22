@@ -1,4 +1,6 @@
-<?php namespace Paymennt;
+<?php namespace Paymennt\checkout;
+
+require_once(__DIR__.'/../Validatable.php');
 
 /**
 * LineItem class
@@ -7,7 +9,7 @@
 *
 * @author bashar
 */
-class Totals extends Validatable {
+class Totals extends \Paymennt\Validatable {
   /**
   * subtotal
   * @var string
