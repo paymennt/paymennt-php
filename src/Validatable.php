@@ -11,6 +11,7 @@ abstract class Validatable {
   private const REGEX_AMOUNT = "/^([0-9]+\.?[0-9]{0,2}|\.[0-9]{1,2})$/";
   private const REGEX_NUMBER = "/^[0-9]+\.?[0-9]{0,2}|\.[0-9]{1,4}$/";
   private const REGEX_WHOLE_NUM = "/^\d+$/";
+  PRIVATE CONST REGEX_COUNTRY_CODE = '/^[a-zA-Z]{2,3}$/';
   /**
   * Validates instasnce values. Throws exception if invalid
   */
@@ -62,8 +63,8 @@ abstract class Validatable {
     return true;
   }
   protected function validateCurrencyCode($param) {
-    if (preg_match('/^[a-zA-Z]{3}$/', $this->{$param}) !== 1) {
-      throw new Exception("currency code must be a 3-digit ISO code and non empty.");
+    if (preg_match(Validatable::REGEX_COUNTRY_CODE, $this->{$param}) !== 1) {
+      throw new Exception("currency code must be a 2 or 3 digit ISO code and non empty.");
     }
   }
 }

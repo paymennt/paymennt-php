@@ -1,4 +1,4 @@
-<?php namespace Paymennt\checkout;
+<?php namespace Paymennt\object;
 
 /**
 *  Checkout class
@@ -51,6 +51,12 @@ class Checkout {
   public $amount;
 
   /**
+  * the cashAmount of this checkout
+  * @var string
+  */
+  public $cashAmount;
+
+  /**
   * status of this checkout. can be one of:
   *   PENDING: not paid
   *   AUTHORIZED: the transaction was successfully authorized but funds are not captured yet
@@ -65,22 +71,16 @@ class Checkout {
   public $status;
 
   /**
+  * the totalRefunded of this checkout
+  * @var string
+  */
+  public $totalRefunded;
+
+  /**
   * redirect url of the payment page
   * @var string
   */
   public $redirectUrl;
-
-  /**
-  * id of the branch to which this payment belongs
-  * @var string
-  */
-  public $branchId;
-
-  /**
-  * name of the branch to which this payment belongs
-  * @var string
-  */
-  public $branchName;
 
   /**
   * The method used to complete the payment
@@ -107,6 +107,12 @@ class Checkout {
   public $deliveryAddress;
 
   /**
+  * timestamp
+  * @var string
+  */
+  public $timestamp;
+
+  /**
   * Optional: Base 64 encoded payment QR code
   * @var string
   */
@@ -117,5 +123,18 @@ class Checkout {
   * @var string
   */
   public $subscriptionId;
+
+   /**
+  * id of the branch to which this payment belongs
+  * @var string
+  */
+  public $branchId;
+
+  /**
+  * name of the branch to which this payment belongs
+  * @var string
+  */
+  public $branchName;
+
 
 }

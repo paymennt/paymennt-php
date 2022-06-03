@@ -1,4 +1,4 @@
-<?php namespace Paymennt\checkout;
+<?php namespace Paymennt\object;
 
 require_once(__DIR__.'/../Validatable.php');
 
@@ -11,31 +11,31 @@ require_once(__DIR__.'/../Validatable.php');
 */
 class Item extends \Paymennt\Validatable {
   /**
-  * name on address
+  * name of item
   * @var string
   */
   public $name;
 
   /**
-  * address line 1
+  * ske
   * @var string
   */
   public $sku;
 
   /**
-  * address line 2
+  * item price
   * @var string
   */
   public $unitprice;
 
   /**
-  * address city
+  * item quantity
   * @var string
   */
   public $quantity;
 
   /**
-  * address state
+  * line total
   * @var string
   */
   public $linetotal;

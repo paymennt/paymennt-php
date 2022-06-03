@@ -1,4 +1,4 @@
-<?php namespace Paymennt\checkout;
+<?php namespace Paymennt\object;
 
 require_once(__DIR__.'/../Validatable.php');
 

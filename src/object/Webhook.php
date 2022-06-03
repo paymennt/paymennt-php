@@ -1,4 +1,4 @@
-<?php namespace Paymennt\webhooks;
+<?php namespace Paymennt\object;
 
 /**
 *  Webhook class

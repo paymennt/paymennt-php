@@ -1,4 +1,4 @@
-<?php namespace Paymennt\subscription;
+<?php namespace Paymennt\object;
 
 /**
 *  Subscription class

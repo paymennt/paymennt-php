@@ -1,19 +1,19 @@
 <?php namespace Paymennt;
 
-use Paymennt\branches\Branch as Branch;
-use Paymennt\branches\MultipleBranch as MultipleBranch;
+use Paymennt\object\Branch as Branch;
+use Paymennt\object\MultipleBranch as MultipleBranch;
 use Paymennt\branches\CreateBranchRequest as CreateBranchRequest;
 use Paymennt\branches\DisableBranchRequest as DisableBranchRequest;
 use Paymennt\branches\EnableBranchRequest as EnableBranchRequest;
 use Paymennt\branches\GetBranchRequest as GetBranchRequest;
 use Paymennt\branches\SearchAllBranchRequest as SearchAllBranchRequest;
 
-use Paymennt\checkout\Checkout as Checkout;
-use Paymennt\checkout\MultipleCheckout as MultipleCheckout;
-use Paymennt\checkout\Address as Address;
-use Paymennt\checkout\Item as Item;
-use Paymennt\checkout\Customer as Customer;
-use Paymennt\checkout\Totals as Totals;
+use Paymennt\object\Checkout as Checkout;
+use Paymennt\object\MultipleCheckout as MultipleCheckout;
+use Paymennt\object\Address as Address;
+use Paymennt\object\Item as Item;
+use Paymennt\object\Customer as Customer;
+use Paymennt\object\Totals as Totals;
 use Paymennt\checkout\GetCheckoutRequest as GetCheckoutRequest;
 use Paymennt\checkout\CancelCheckoutRequest as CancelCheckoutRequest;
 use Paymennt\checkout\LinkCheckoutRequest as LinkCheckoutRequest;
@@ -23,8 +23,13 @@ use Paymennt\checkout\RefundCheckoutRequest as RefundCheckoutRequest;
 use Paymennt\checkout\SearchCheckoutRequest as SearchCheckoutRequest;
 use Paymennt\checkout\WebCheckoutRequest as WebCheckoutRequest;
 
-use Paymennt\webhooks\Webhook as Webhook;
-use Paymennt\webhooks\MultipleWebhook as MultipleWebhook;
+use Paymennt\object\Payment as Payment;
+use Paymennt\payment\CreatePaymentRequest as CreatePaymentRequest;
+use Paymennt\payment\CaptureAuthPaymentRequest as CaptureAuthPaymentRequest;
+use Paymennt\payment\GetPaymentRequest as GetPaymentRequest;
+
+use Paymennt\object\Webhook as Webhook;
+use Paymennt\object\MultipleWebhook as MultipleWebhook;
 use Paymennt\webhooks\CreateWebhookRequest as CreateWebhookRequest;
 use Paymennt\webhooks\DisableWebhookRequest as DisableWebhookRequest;
 use Paymennt\webhooks\EnableWebhookRequest as EnableWebhookRequest;
@@ -33,9 +38,9 @@ use Paymennt\webhooks\SearchAllWebhookRequest as SearchAllWebhookRequest;
 use Paymennt\webhooks\TestWebhookRequest as TestWebhookRequest;
 use Paymennt\webhooks\DeleteWebhookRequest as DeleteWebhookRequest;
 
-use Paymennt\subscription\Subscription as Subscription;
-use Paymennt\subscription\MultipleSubscription as MultipleSubscription;
-use Paymennt\subscription\SubscriptionPayments as SubscriptionPayments;
+use Paymennt\object\Subscription as Subscription;
+use Paymennt\object\MultipleSubscription as MultipleSubscription;
+use Paymennt\object\SubscriptionPayments as SubscriptionPayments;
 use Paymennt\subscription\CreateSubscriptionRequest as CreateSubscriptionRequest;
 use Paymennt\subscription\GetSubscriptionRequest as GetSubscriptionRequest;
 use Paymennt\subscription\SearchSubscriptionRequest as SearchSubscriptionRequest;
@@ -54,8 +59,8 @@ use Paymennt\subscription\GetSubscriptionPaymentsRequest as GetSubscriptionPayme
 */
 final class PaymenntClient {
 
-  private const ENV_URL_LIVE  = "https://api.pointcheckout.com/mer/v2.0/";
-  private const ENV_URL_TEST  = "https://api.test.pointcheckout.com/mer/v2.0/";
+  private const ENV_URL_LIVE  = "https://api.paymennt.com/mer/v2.0/";
+  private const ENV_URL_TEST  = "https://api.test.paymennt.com/mer/v2.0/";
 
   private const URL_CHECKOUT = "checkout/";
   private const URL_CHECKOUT_SEARCH = "checkout?";
@@ -64,6 +69,9 @@ final class PaymenntClient {
   private const URL_CHECKOUT_QR= "checkout/qr";
   private const URL_CHECKOUT_LINK = "checkout/link";
 
+  private const URL_PAYMENT = "payment/";
+  private const URL_PAYMENT_CREATE = "payment/debit";
+  
   private const URL_BRANCH = "branches/";
   private const URL_BRANCH_SEARCH = "branches?";
 
@@ -107,10 +115,6 @@ final class PaymenntClient {
     $result = $this->apiCall($url, null);
     return $this->parseCheckoutResult($result);
   }
-
-  /***********************************************************************************************
-  * CHECKOUT API CALLS
-  */
 
   public function createWebCheckout(WebCheckoutRequest $webCheckoutRequest) : Checkout {
     if (!isset($webCheckoutRequest)) {
@@ -194,6 +198,46 @@ final class PaymenntClient {
     return $this->parseCheckoutResult($result);
   }
   
+
+  /***********************************************************************************************
+  * PAYMENT API CALLS
+  */
+
+  public function getPayment(string $paymentId) : Payment {
+    $url = PaymenntClient::URL_PAYMENT . $paymentId;
+    $result = $this->apiCall($url, null);
+    return $this->parsePaymentResult($result);
+  }
+
+  public function getPaymentRequest(GetPaymentRequest $getPaymentRequest) : Payment {
+    if (!isset($getPaymentRequest)) {
+      throw new Exception("request cannot be null or empty");
+    }
+    $getPaymentRequest->validate();
+    return $this->getPayment($getPaymentRequest->paymentId);
+  }
+  
+  public function createPayment(CreatePaymentRequest $createPaymentRequest) : Payment {
+    if (!isset($createPaymentRequest)) {
+      throw new Exception("request cannot be null or empty");
+    }
+    $createPaymentRequest->validate();
+    $url = PaymenntClient::URL_PAYMENT_CREATE;
+    $result = $this->apiCall($url, $createPaymentRequest);
+    return $this->parsePaymentResult($result);
+  }
+
+  public function captureAuthorizedPayment(CaptureAuthPaymentRequest $captureAuthPaymentRequest) : Payment {
+    if (!isset($captureAuthPaymentRequest)) {
+      throw new Exception("request cannot be null or empty");
+    }
+    $captureAuthPaymentRequest->validate();
+    $pathParam=$captureAuthPaymentRequest->paymentId . "/capture";
+    $url = PaymenntClient::URL_PAYMENT . $pathParam;
+    $result = $this->apiCall($url, $captureAuthPaymentRequest);
+    return $this->parsePaymentResult($result);
+  }
+
 
   /***********************************************************************************************
   * BRANCHES API CALLS
@@ -427,11 +471,14 @@ final class PaymenntClient {
     $checkout->orderId = $result->orderId;
     $checkout->currency = $result->currency;
     $checkout->amount = $result->amount;
+    $checkout->cashAmount = $result->cashAmount;
+    $checkout->totalRefunded = $result->totalRefunded;
     $checkout->status = $result->status;
     $checkout->redirectUrl = $result->redirectUrl;
     $checkout->branchId = $result->branchId;
     $checkout->branchName = $result->branchName;
     $checkout->usedPaymentMethod = $result->usedPaymentMethod;
+    $checkout->timestamp = $result->timestamp;
 
     # values not present in every API call
     if (isset($result->base64QR)) {
@@ -491,6 +538,19 @@ final class PaymenntClient {
       $multipleCheckout->content[]= $checkout;
     }
     return $multipleCheckout;
+  }
+
+  private function parsePaymentResult($result) {
+    $payment = new Payment();
+    $payment->id = $result->id;
+    $payment->currency = $result->currency;
+    $payment->amount = $result->amount;
+    $payment->status = $result->status;
+    $payment->redirectUrl = $result->redirectUrl;
+    $payment->responseMessage = $result->responseMessage;
+    $payment->checkoutDetails = $this->parseCheckoutResult ($result->checkoutDetails);
+    
+    return $payment;
   }
 
 
@@ -704,3 +764,4 @@ final class PaymenntClient {
   }
 
 }
+ 

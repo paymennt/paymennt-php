@@ -1,4 +1,4 @@
-<?php namespace Paymennt\branches;
+<?php namespace Paymennt\object;
 
 /**
 *  Branch class

@@ -19,7 +19,7 @@ abstract class AbstractWebhookRequest extends \Paymennt\Validatable {
   public $webhookId;
 
   /**
-  * webhook endpoint that PointCheckout server will push messages to.
+  * webhook endpoint that Paymennt server will push messages to.
 
   * @var string
   */
