@@ -1,5 +1,5 @@
 {
-  "name": "paymennt-test/paymennt-php",
+  "name": "paymennt/paymennt-php",
   "description": "PHP client for the PAYMENNT api",
   "type": "library",
   "keywords": [
