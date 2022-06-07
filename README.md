@@ -1,2 +1,3 @@
 # paymennt-php
-PHP library for the PAYMENNT API.
+
+This is the wrapper PHP sdk for the Paymennt API (https://docs.paymennt.com/api)
