@@ -59,7 +59,6 @@ class Customer extends \Paymennt\Validatable {
   public function validate() {
     $this->validateNullEmpty("firstName");
     $this->validateNullEmpty("lastName");
-    //$this->validateNullEmpty("reference");
     if (!empty($this->email)) {
       $this->validateEmail("email");
     }

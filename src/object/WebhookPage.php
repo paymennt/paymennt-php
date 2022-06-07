@@ -8,7 +8,7 @@
 *  @author bashar
 */
 
-class MultipleWebhook{
+class WebhookPage{
 
   /**
   * array of webhook objects

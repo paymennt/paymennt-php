@@ -8,7 +8,7 @@
 *  @author abdullah
 */
 
-class MultipleBranch{
+class BranchPage{
 
   /**
   * array of branch objects

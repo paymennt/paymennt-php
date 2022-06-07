@@ -1,7 +1,7 @@
 <?php namespace Paymennt;
 
 use Paymennt\object\Branch as Branch;
-use Paymennt\object\MultipleBranch as MultipleBranch;
+use Paymennt\object\BranchPage as BranchPage;
 use Paymennt\branches\CreateBranchRequest as CreateBranchRequest;
 use Paymennt\branches\DisableBranchRequest as DisableBranchRequest;
 use Paymennt\branches\EnableBranchRequest as EnableBranchRequest;
@@ -9,7 +9,7 @@ use Paymennt\branches\GetBranchRequest as GetBranchRequest;
 use Paymennt\branches\SearchAllBranchRequest as SearchAllBranchRequest;
 
 use Paymennt\object\Checkout as Checkout;
-use Paymennt\object\MultipleCheckout as MultipleCheckout;
+use Paymennt\object\CheckoutPage as CheckoutPage;
 use Paymennt\object\Address as Address;
 use Paymennt\object\Item as Item;
 use Paymennt\object\Customer as Customer;
@@ -29,7 +29,7 @@ use Paymennt\payment\CaptureAuthPaymentRequest as CaptureAuthPaymentRequest;
 use Paymennt\payment\GetPaymentRequest as GetPaymentRequest;
 
 use Paymennt\object\Webhook as Webhook;
-use Paymennt\object\MultipleWebhook as MultipleWebhook;
+use Paymennt\object\WebhookPage as WebhookPage;
 use Paymennt\webhooks\CreateWebhookRequest as CreateWebhookRequest;
 use Paymennt\webhooks\DisableWebhookRequest as DisableWebhookRequest;
 use Paymennt\webhooks\EnableWebhookRequest as EnableWebhookRequest;
@@ -39,7 +39,7 @@ use Paymennt\webhooks\TestWebhookRequest as TestWebhookRequest;
 use Paymennt\webhooks\DeleteWebhookRequest as DeleteWebhookRequest;
 
 use Paymennt\object\Subscription as Subscription;
-use Paymennt\object\MultipleSubscription as MultipleSubscription;
+use Paymennt\object\SubscriptionPage as SubscriptionPage;
 use Paymennt\object\SubscriptionPayments as SubscriptionPayments;
 use Paymennt\subscription\CreateSubscriptionRequest as CreateSubscriptionRequest;
 use Paymennt\subscription\GetSubscriptionRequest as GetSubscriptionRequest;
@@ -156,7 +156,7 @@ final class PaymenntClient {
     return $this->parseCheckoutResult($result);
   }
 
-  public function searchCheckoutRequest(SearchCheckoutRequest $searchCheckoutRequest) : MultipleCheckout {
+  public function searchCheckoutRequest(SearchCheckoutRequest $searchCheckoutRequest) : CheckoutPage {
     if (!isset($searchCheckoutRequest)) {
       throw new Exception("request cannot be null or empty");
     }
@@ -257,7 +257,7 @@ final class PaymenntClient {
     return $this->getBranch($getBranchRequest->branchId);
   }
 
-  public function searchAllBranchesRequest(SearchAllBranchRequest $searchAllBranchRequest) : MultipleBranch {
+  public function searchAllBranchesRequest(SearchAllBranchRequest $searchAllBranchRequest) : BranchPage {
     if (!isset($searchAllBranchRequest)) {
       throw new Exception("request cannot be null or empty");
     }
@@ -318,7 +318,7 @@ final class PaymenntClient {
     return $this->getWebhook($getWebhookRequest->webhookId);
   }
 
-  public function searchAllWebhooksRequest(SearchAllWebhookRequest $searchAllWebhookRequest) : MultipleWebhook {
+  public function searchAllWebhooksRequest(SearchAllWebhookRequest $searchAllWebhookRequest) : WebhookPage {
     if (!isset($searchAllWebhookRequest)) {
       throw new Exception("request cannot be null or empty");
     }
@@ -403,7 +403,7 @@ final class PaymenntClient {
     return $this->getSubscription($getSubscriptionRequest->subscriptionId);
   }
 
-  public function searchSubscriptionRequest(SearchSubscriptionRequest $searchSubscriptionRequest) : MultipleSubscription {
+  public function searchSubscriptionRequest(SearchSubscriptionRequest $searchSubscriptionRequest) : SubscriptionPage {
     if (!isset($searchSubscriptionRequest)) {
       throw new Exception("request cannot be null or empty");
     }
@@ -527,17 +527,17 @@ final class PaymenntClient {
   }
 
   private function parseMultiCheckoutResult($result) {
-    $multipleCheckout = new MultipleCheckout();
-    $multipleCheckout->page = $result->page;
-    $multipleCheckout->size = $result->size;
-    $multipleCheckout->totalPages = $result->totalPages;
-    $multipleCheckout->totalElements = $result->totalElements;
+    $checkoutPage = new CheckoutPage();
+    $checkoutPage->page = $result->page;
+    $checkoutPage->size = $result->size;
+    $checkoutPage->totalPages = $result->totalPages;
+    $checkoutPage->totalElements = $result->totalElements;
 
     foreach($result->content as $con) {
       $checkout=$this->parseCheckoutResult ($con);
-      $multipleCheckout->content[]= $checkout;
+      $checkoutPage->content[]= $checkout;
     }
-    return $multipleCheckout;
+    return $checkoutPage;
   }
 
   private function parsePaymentResult($result) {
@@ -574,13 +574,13 @@ final class PaymenntClient {
   }
 
   private function parseMultiBranchResult($response) {
-    $multipleBranch = new MultipleBranch();
+    $branchPage = new BranchPage();
     
     foreach($response as $branch) {
       $tempBranch=$this->parseBranchResult($branch);
-      $multipleBranch->content[]= $tempBranch;
+      $branchPage->content[]= $tempBranch;
     }
-    return $multipleBranch;
+    return $branchPage;
   }
 
   private function parseWebhookResult($result) {
@@ -607,14 +607,14 @@ final class PaymenntClient {
   }
 
   private function parseMultiWebhookResult($response) {
-    $multipleWebhook = new MultipleWebhook();
+    $webhookPage = new WebhookPage();
     
     foreach($response as $webhook) {
       $tempWebhook=$this->parseWebhookResult($webhook);
-      $multipleWebhook->content[]= $tempWebhook;
+      $webhookPage->content[]= $tempWebhook;
     }
 
-    return $multipleWebhook;
+    return $webhookPage;
   }
 
   private function parseSubscriptionResult($result) {
@@ -677,19 +677,19 @@ final class PaymenntClient {
   }
 
   private function parseMultiSubscriptionResult($result) {
-    $multipleSubscription = new MultipleSubscription();
+    $subscriptionPage = new SubscriptionPage();
     
-    $multipleSubscription->page = $result->page;
-    $multipleSubscription->size = $result->size;
-    $multipleSubscription->totalPages = $result->totalPages;
-    $multipleSubscription->totalElements = $result->totalElements;
+    $subscriptionPage->page = $result->page;
+    $subscriptionPage->size = $result->size;
+    $subscriptionPage->totalPages = $result->totalPages;
+    $subscriptionPage->totalElements = $result->totalElements;
 
     foreach($result->content as $subscription) {
       $tempSubscription=$this->parseSubscriptionResult($subscription);
-      $multipleSubscription->content[]= $tempSubscription;
+      $subscriptionPage->content[]= $tempSubscription;
     }
 
-    return $multipleSubscription;
+    return $subscriptionPage;
   }
 
   private function parseSubscriptionPaymentsResult($result) {

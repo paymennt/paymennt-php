@@ -13,8 +13,6 @@ use Paymennt\Exception as Exception;
 */
 class Address extends \Paymennt\Validatable {
 
-  // private const REGEX_COUNTRY = "/^[a-zA-Z]{3}$/";
-
   /**
   * name on address
   * @var string
@@ -52,7 +50,7 @@ class Address extends \Paymennt\Validatable {
   public $zip;
 
   /**
-  * address ISO 3-letter country code (Ex. USA, FRA, UAE, KSA, IND, etc)
+  * address ISO 2 or 3 letter country code (Ex. USA, FRA, UAE, KSA, IND, etc)
   * @var string
   */
   public $country;
@@ -68,6 +66,7 @@ class Address extends \Paymennt\Validatable {
     $this->validateNullEmpty("name");
     $this->validateNullEmpty("address1");
     $this->validateNullEmpty("city");
-    $this->validateNullEmpty("country");
+    $this->validateCurrencyCode("country");
+    return true;
   }
 }
