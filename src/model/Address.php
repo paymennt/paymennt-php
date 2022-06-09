@@ -1,4 +1,8 @@
-<?php namespace Paymennt;
+<?php namespace Paymennt\model;
+
+require_once(__DIR__.'/../Validatable.php');
+
+use Paymennt\Exception as Exception;
 
 /**
 *  Address class
@@ -7,9 +11,7 @@
 *
 *  @author bashar
 */
-class Address extends Validatable {
-
-  private const REGEX_COUNTRY = "/^[a-zA-Z]{3}$/";
+class Address extends \Paymennt\Validatable {
 
   /**
   * name on address
@@ -48,7 +50,7 @@ class Address extends Validatable {
   public $zip;
 
   /**
-  * address ISO 3-letter country code (Ex. USA, FRA, UAE, KSA, IND, etc)
+  * address ISO 2 or 3 letter country code (Ex. USA, FRA, UAE, KSA, IND, etc)
   * @var string
   */
   public $country;
@@ -64,8 +66,7 @@ class Address extends Validatable {
     $this->validateNullEmpty("name");
     $this->validateNullEmpty("address1");
     $this->validateNullEmpty("city");
-    if (preg_match(Address::REGEX_COUNTRY, $this->country) !== 1) {
-      throw new Exception("country must be an ISO 3 alpha code");
-    }
+    $this->validateCurrencyCode("country");
+    return true;
   }
 }

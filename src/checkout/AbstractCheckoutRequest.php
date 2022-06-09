@@ -1,4 +1,7 @@
-<?php namespace Paymennt;
+<?php namespace Paymennt\checkout;
+
+require_once(__DIR__.'/../Validatable.php');
+use Paymennt\Exception as Exception;
 
 /**
 *  Checkout class
@@ -7,7 +10,8 @@
 *
 *  @author bashar
 */
-abstract class AbstractCheckoutRequest extends Validatable {
+
+abstract class AbstractCheckoutRequest extends \Paymennt\Validatable {
 
   /**
   * the payment request ID for which this checkout was created. unique per order id per merchant.

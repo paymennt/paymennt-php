@@ -1,4 +1,6 @@
-<?php namespace Paymennt;
+<?php namespace Paymennt\model;
+
+require_once(__DIR__.'/../Validatable.php');
 
 /**
 *  Customer class
@@ -7,7 +9,7 @@
 *
 *  @author bashar
 */
-class Customer extends Validatable {
+class Customer extends \Paymennt\Validatable {
 
   private const REGEX_EMAIL = "/^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,10}$/";
 
@@ -57,7 +59,6 @@ class Customer extends Validatable {
   public function validate() {
     $this->validateNullEmpty("firstName");
     $this->validateNullEmpty("lastName");
-    $this->validateNullEmpty("reference");
     if (!empty($this->email)) {
       $this->validateEmail("email");
     }

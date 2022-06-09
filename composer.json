@@ -2,8 +2,13 @@
   "name": "paymennt/paymennt-php",
   "description": "PHP client for the PAYMENNT api",
   "type": "library",
-  "keywords": ["paymennt", "payment processing", "payment gateway", "api"],
-  "homepage" : "https://www.paymennt.com",
+  "keywords": [
+    "paymennt",
+    "payment processing",
+    "payment gateway",
+    "api"
+  ],
+  "homepage": "https://www.paymennt.com",
   "license": "MIT",
   "authors": [
     {
