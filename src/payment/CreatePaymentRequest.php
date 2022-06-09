@@ -1,7 +1,7 @@
 <?php namespace Paymennt\payment;
 
 use Paymennt\Exception as Exception;
-use \Paymennt\object\TokenPaymentSource as TokenPaymentSource;
+use \Paymennt\model\TokenPaymentSource as TokenPaymentSource;
 
 /**
 *  Payment class

@@ -11,7 +11,7 @@ use Paymennt\Exception as Exception;
 *
 *  @author abdullah
 */
-class SearchAllBranchRequest extends AbstractBranchRequest {
+class BranchLookupRequest extends AbstractBranchRequest {
 
   /**
   * page number, default is 0

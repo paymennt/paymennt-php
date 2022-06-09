@@ -1,13 +1,13 @@
-<?php namespace Paymennt\object;
+<?php namespace Paymennt\model;
 
 /**
 *  Subscription class
 *
-*  A subscription class representing a PAYMENNT search result of subscription payments
+*  A subscription class representing a PAYMENNT search result of subscription objects
 *
 *  @author abdullah
 */
-class SubscriptionPayments{
+class SubscriptionPage{
 
   /**
   * the number of current page showing, starts from 0, default 0
@@ -33,8 +33,8 @@ class SubscriptionPayments{
   public $totalElements;
 
   /**
-  * array of subscription payment objects
-  * @var array
+  * array of subscription objects
+  * @var Subscription
   */
   public $content=array();
   

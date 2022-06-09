@@ -1,49 +1,49 @@
 <?php namespace Paymennt;
 
-use Paymennt\object\Branch as Branch;
-use Paymennt\object\BranchPage as BranchPage;
+use Paymennt\model\Branch as Branch;
+use Paymennt\model\BranchPage as BranchPage;
 use Paymennt\branches\CreateBranchRequest as CreateBranchRequest;
 use Paymennt\branches\DisableBranchRequest as DisableBranchRequest;
 use Paymennt\branches\EnableBranchRequest as EnableBranchRequest;
 use Paymennt\branches\GetBranchRequest as GetBranchRequest;
-use Paymennt\branches\SearchAllBranchRequest as SearchAllBranchRequest;
+use Paymennt\branches\BranchLookupRequest as BranchLookupRequest;
 
-use Paymennt\object\Checkout as Checkout;
-use Paymennt\object\CheckoutPage as CheckoutPage;
-use Paymennt\object\Address as Address;
-use Paymennt\object\Item as Item;
-use Paymennt\object\Customer as Customer;
-use Paymennt\object\Totals as Totals;
+use Paymennt\model\Checkout as Checkout;
+use Paymennt\model\CheckoutPage as CheckoutPage;
+use Paymennt\model\Address as Address;
+use Paymennt\model\Item as Item;
+use Paymennt\model\Customer as Customer;
+use Paymennt\model\Totals as Totals;
 use Paymennt\checkout\GetCheckoutRequest as GetCheckoutRequest;
 use Paymennt\checkout\CancelCheckoutRequest as CancelCheckoutRequest;
 use Paymennt\checkout\LinkCheckoutRequest as LinkCheckoutRequest;
 use Paymennt\checkout\MobileCheckoutRequest as MobileCheckoutRequest;
 use Paymennt\checkout\QRCheckoutRequest as QRCheckoutRequest;
 use Paymennt\checkout\RefundCheckoutRequest as RefundCheckoutRequest;
-use Paymennt\checkout\SearchCheckoutRequest as SearchCheckoutRequest;
+use Paymennt\checkout\CheckoutLookupRequest as CheckoutLookupRequest;
 use Paymennt\checkout\WebCheckoutRequest as WebCheckoutRequest;
 
-use Paymennt\object\Payment as Payment;
+use Paymennt\model\Payment as Payment;
 use Paymennt\payment\CreatePaymentRequest as CreatePaymentRequest;
 use Paymennt\payment\CaptureAuthPaymentRequest as CaptureAuthPaymentRequest;
 use Paymennt\payment\GetPaymentRequest as GetPaymentRequest;
 
-use Paymennt\object\Webhook as Webhook;
-use Paymennt\object\WebhookPage as WebhookPage;
+use Paymennt\model\Webhook as Webhook;
+use Paymennt\model\WebhookPage as WebhookPage;
 use Paymennt\webhooks\CreateWebhookRequest as CreateWebhookRequest;
 use Paymennt\webhooks\DisableWebhookRequest as DisableWebhookRequest;
 use Paymennt\webhooks\EnableWebhookRequest as EnableWebhookRequest;
 use Paymennt\webhooks\GetWebhookRequest as GetWebhookRequest;
-use Paymennt\webhooks\SearchAllWebhookRequest as SearchAllWebhookRequest;
+use Paymennt\webhooks\WebhookLookupRequest as WebhookLookupRequest;
 use Paymennt\webhooks\TestWebhookRequest as TestWebhookRequest;
 use Paymennt\webhooks\DeleteWebhookRequest as DeleteWebhookRequest;
 
-use Paymennt\object\Subscription as Subscription;
-use Paymennt\object\SubscriptionPage as SubscriptionPage;
-use Paymennt\object\SubscriptionPayments as SubscriptionPayments;
+use Paymennt\model\Subscription as Subscription;
+use Paymennt\model\SubscriptionPage as SubscriptionPage;
+use Paymennt\model\SubscriptionPayments as SubscriptionPayments;
 use Paymennt\subscription\CreateSubscriptionRequest as CreateSubscriptionRequest;
 use Paymennt\subscription\GetSubscriptionRequest as GetSubscriptionRequest;
-use Paymennt\subscription\SearchSubscriptionRequest as SearchSubscriptionRequest;
+use Paymennt\subscription\SubscriptionLookupRequest as SubscriptionLookupRequest;
 use Paymennt\subscription\PauseSubscriptionRequest as PauseSubscriptionRequest;
 use Paymennt\subscription\ResumeSubscriptionRequest as ResumeSubscriptionRequest;
 use Paymennt\subscription\GetSubscriptionPaymentsRequest as GetSubscriptionPaymentsRequest;
@@ -63,7 +63,7 @@ final class PaymenntClient {
   private const ENV_URL_TEST  = "https://api.test.paymennt.com/mer/v2.0/";
 
   private const URL_CHECKOUT = "checkout/";
-  private const URL_CHECKOUT_SEARCH = "checkout?";
+  private const URL_CHECKOUT_LOOKUP = "checkout?";
   private const URL_CHECKOUT_WEB = "checkout/web";
   private const URL_CHECKOUT_MOBILE = "checkout/mobile";
   private const URL_CHECKOUT_QR= "checkout/qr";
@@ -73,13 +73,13 @@ final class PaymenntClient {
   private const URL_PAYMENT_CREATE = "payment/debit";
   
   private const URL_BRANCH = "branches/";
-  private const URL_BRANCH_SEARCH = "branches?";
+  private const URL_BRANCH_LOOKUP = "branches?";
 
   private const URL_WEBHOOK = "webhooks/";
-  private const URL_WEBHOOK_SEARCH = "webhooks?";
+  private const URL_WEBHOOK_LOOKUP = "webhooks?";
   
   private const URL_SUBSCRIBE = "subscription/";
-  private const URL_SUBSCRIBE_SEARCH = "subscription?";
+  private const URL_SUBSCRIBE_LOOKUP = "subscription?";
   
   /**  @var string $apiKey the PAYMENNT API Key */
   private $apiKey;
@@ -156,15 +156,15 @@ final class PaymenntClient {
     return $this->parseCheckoutResult($result);
   }
 
-  public function searchCheckoutRequest(SearchCheckoutRequest $searchCheckoutRequest) : CheckoutPage {
-    if (!isset($searchCheckoutRequest)) {
+  public function checkoutLookupRequest(CheckoutLookupRequest $checkoutLookupRequest) : CheckoutPage {
+    if (!isset($checkoutLookupRequest)) {
       throw new Exception("request cannot be null or empty");
     }
-    $searchCheckoutRequest->validate();
-    $queryParam= $searchCheckoutRequest->generateQuery();
-    $url = PaymenntClient::URL_CHECKOUT_SEARCH ."/". $queryParam;
+    $checkoutLookupRequest->validate();
+    $queryParam= $checkoutLookupRequest->generateQuery();
+    $url = PaymenntClient::URL_CHECKOUT_LOOKUP ."/". $queryParam;
     $result = $this->apiCall($url, NULL);
-    return $this->parseMultiCheckoutResult($result);
+    return $this->parseCheckoutPageResult($result);
   }
 
   public function getCheckoutRequest(GetCheckoutRequest $getCheckoutRequest) : Checkout {
@@ -257,15 +257,15 @@ final class PaymenntClient {
     return $this->getBranch($getBranchRequest->branchId);
   }
 
-  public function searchAllBranchesRequest(SearchAllBranchRequest $searchAllBranchRequest) : BranchPage {
-    if (!isset($searchAllBranchRequest)) {
+  public function branchLookupRequest(BranchLookupRequest $branchLookupRequest) : BranchPage {
+    if (!isset($branchLookupRequest)) {
       throw new Exception("request cannot be null or empty");
     }
-    $searchAllBranchRequest->validate();
-    $queryParam= $searchAllBranchRequest->generateQuery();
-    $url = PaymenntClient::URL_BRANCH_SEARCH . $queryParam;
+    $branchLookupRequest->validate();
+    $queryParam= $branchLookupRequest->generateQuery();
+    $url = PaymenntClient::URL_BRANCH_LOOKUP . $queryParam;
     $result = $this->apiCall($url, NULL);
-    return $this->parseMultiBranchResult($result);
+    return $this->parseBranchPageResult($result);
   }
 
   public function createBranch(CreateBranchRequest $createBranchRequest) : Branch {
@@ -318,15 +318,15 @@ final class PaymenntClient {
     return $this->getWebhook($getWebhookRequest->webhookId);
   }
 
-  public function searchAllWebhooksRequest(SearchAllWebhookRequest $searchAllWebhookRequest) : WebhookPage {
-    if (!isset($searchAllWebhookRequest)) {
+  public function webhookLookupRequest(WebhookLookupRequest $webhookLookupRequest) : WebhookPage {
+    if (!isset($webhookLookupRequest)) {
       throw new Exception("request cannot be null or empty");
     }
-    $searchAllWebhookRequest->validate();
-    $queryParam= $searchAllWebhookRequest->generateQuery();
-    $url = PaymenntClient::URL_WEBHOOK_SEARCH . $queryParam;
+    $webhookLookupRequest->validate();
+    $queryParam= $webhookLookupRequest->generateQuery();
+    $url = PaymenntClient::URL_WEBHOOK_LOOKUP . $queryParam;
     $result = $this->apiCall($url, NULL);
-    return $this->parseMultiWebhookResult($result);
+    return $this->parseWebhookPageResult($result);
   }
 
   public function createWebhook(CreateWebhookRequest $createWebhookRequest) : Webhook {
@@ -403,15 +403,15 @@ final class PaymenntClient {
     return $this->getSubscription($getSubscriptionRequest->subscriptionId);
   }
 
-  public function searchSubscriptionRequest(SearchSubscriptionRequest $searchSubscriptionRequest) : SubscriptionPage {
-    if (!isset($searchSubscriptionRequest)) {
+  public function subscriptionLookupRequest(SubscriptionLookupRequest $subscriptionLookupRequest) : SubscriptionPage {
+    if (!isset($subscriptionLookupRequest)) {
       throw new Exception("request cannot be null or empty");
     }
-    $searchSubscriptionRequest->validate();
-    $queryParam=$searchSubscriptionRequest->generateQuery();
-    $url = PaymenntClient::URL_SUBSCRIBE_SEARCH . $queryParam;
+    $subscriptionLookupRequest->validate();
+    $queryParam=$subscriptionLookupRequest->generateQuery();
+    $url = PaymenntClient::URL_SUBSCRIBE_LOOKUP . $queryParam;
     $result = $this->apiCall($url, NULL);
-    return $this->parseMultiSubscriptionResult($result);
+    return $this->parseSubscriptionPageResult($result);
   }
 
   public function createSubscription(CreateSubscriptionRequest $createSubscriptionRequest) : Subscription {
@@ -526,7 +526,7 @@ final class PaymenntClient {
     return $checkout;
   }
 
-  private function parseMultiCheckoutResult($result) {
+  private function parseCheckoutPageResult($result) {
     $checkoutPage = new CheckoutPage();
     $checkoutPage->page = $result->page;
     $checkoutPage->size = $result->size;
@@ -573,7 +573,7 @@ final class PaymenntClient {
     return $branch;
   }
 
-  private function parseMultiBranchResult($response) {
+  private function parseBranchPageResult($response) {
     $branchPage = new BranchPage();
     
     foreach($response as $branch) {
@@ -606,7 +606,7 @@ final class PaymenntClient {
     return $webhook;
   }
 
-  private function parseMultiWebhookResult($response) {
+  private function parseWebhookPageResult($response) {
     $webhookPage = new WebhookPage();
     
     foreach($response as $webhook) {
@@ -676,7 +676,7 @@ final class PaymenntClient {
     return $subscription;
   }
 
-  private function parseMultiSubscriptionResult($result) {
+  private function parseSubscriptionPageResult($result) {
     $subscriptionPage = new SubscriptionPage();
     
     $subscriptionPage->page = $result->page;
@@ -721,7 +721,6 @@ final class PaymenntClient {
     );
     $requestUrl = $this->getApiBaseUrl() . $url;
 
-    echo "RequestUrl    :" . $requestUrl . "\n";
     $ch = curl_init($requestUrl);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
     curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);

@@ -11,7 +11,7 @@ use Paymennt\Exception as Exception;
 *  @author abdullah
 */
 
-class SearchAllWebhookRequest extends AbstractWebhookRequest {
+class WebhookLookupRequest extends AbstractWebhookRequest {
 
   /**
   * page number, default is 0

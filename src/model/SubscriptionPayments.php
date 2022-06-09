@@ -1,13 +1,14 @@
-<?php namespace Paymennt\object;
+<?php namespace Paymennt\model;
 
 /**
-*  Checkout class
+*  Subscription class
 *
-*  A checkout class representing a PAYMENNT checkout object
+*  A subscription class representing a PAYMENNT search result of subscription payments
 *
-*  @author bashar
+*  @author abdullah
 */
-class CheckoutPage {
+class SubscriptionPayments{
+
   /**
   * the number of current page showing, starts from 0, default 0
   * @var int
@@ -32,8 +33,8 @@ class CheckoutPage {
   public $totalElements;
 
   /**
-  * merchant customer associated with this checkout
-  * @var Customer
+  * array of subscription payment objects
+  * @var array
   */
   public $content=array();
   

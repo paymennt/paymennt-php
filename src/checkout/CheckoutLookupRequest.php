@@ -9,7 +9,7 @@ require_once(__DIR__.'/AbstractCheckoutRequest.php');
 *
 *  @author abdullah
 */
-class SearchCheckoutRequest extends AbstractCheckoutRequest {
+class CheckoutLookupRequest extends AbstractCheckoutRequest {
 
   /**
   * The type of payment to search for

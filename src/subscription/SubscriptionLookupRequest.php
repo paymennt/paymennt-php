@@ -11,7 +11,7 @@ use Paymennt\Exception as Exception;
 *
 *  @author abdullah
 */
-class SearchSubscriptionRequest extends AbstractSubscriptionRequest {
+class SubscriptionLookupRequest extends AbstractSubscriptionRequest {
   
   /**
   * filter subscriptions after the provided id
