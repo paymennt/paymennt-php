@@ -8,9 +8,7 @@
 * @author bashar
 */
 abstract class Validatable {
-  /**
-  * Single parameter validation
-  */
+  
   private const REGEX_AMOUNT = "/^([0-9]+(\.[0-9]{1,3})?)$/"; 
   private const REGEX_NUMBER = "/^([0-9]+(\.[0-9]{1,4})?)$/";
   private const REGEX_WHOLE_NUM = "/^\d+$/";
