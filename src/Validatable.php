@@ -8,8 +8,11 @@
 * @author bashar
 */
 abstract class Validatable {
-  private const REGEX_AMOUNT = "/^([0-9]+\.?[0-9]{0,2}|\.[0-9]{1,2})$/";
-  private const REGEX_NUMBER = "/^[0-9]+\.?[0-9]{0,2}|\.[0-9]{1,4}$/";
+  /**
+  * Single parameter validation
+  */
+  private const REGEX_AMOUNT = "/^([0-9]+(\.[0-9]{1,3})?)$/"; 
+  private const REGEX_NUMBER = "/^([0-9]+(\.[0-9]{1,4})?)$/";
   private const REGEX_WHOLE_NUM = "/^\d+$/";
   PRIVATE CONST REGEX_COUNTRY_CODE = '/^[a-zA-Z]{2,3}$/';
   /**
@@ -31,7 +34,7 @@ abstract class Validatable {
   */
   protected function validateAmount($param) {
     if (preg_match(Validatable::REGEX_AMOUNT, $this->{$param}) !== 1) {
-      throw new Exception("'".$this->{$param}."' is not a valid amount. must be a decimal with a maximum of 2 decimal digits");
+      throw new Exception("'".$this->{$param}."' is not a valid amount. must be a decimal with a maximum of 3 decimal digits");
     }
   }
 
