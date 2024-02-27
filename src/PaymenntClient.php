@@ -141,7 +141,7 @@ final class PaymenntClient {
       throw new Exception("request cannot be null or empty");
     }
     $qrCheckoutRequest->validate();
-    $url = PaymenntClient::URL_CHECKOUT_LINK;
+    $url = PaymenntClient::URL_CHECKOUT_QR;
     $result = $this->apiCall($url, $qrCheckoutRequest);
     return $this->parseCheckoutResult($result);
   }
